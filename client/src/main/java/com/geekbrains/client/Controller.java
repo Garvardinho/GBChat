@@ -7,12 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
+import java.io.*;
 import java.net.URL;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-
     @FXML
     TextArea textArea;
 
@@ -28,17 +28,19 @@ public class Controller implements Initializable {
     @FXML
     ListView<String> clientsList;
 
-    private boolean authenticated;
+    @FXML
+    StackPane stackPane;
+
     private String nickname;
 
     public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
         authPanel.setVisible(!authenticated);
         authPanel.setManaged(!authenticated);
         msgPanel.setVisible(authenticated);
         msgPanel.setManaged(authenticated);
         clientsList.setVisible(authenticated);
         clientsList.setManaged(authenticated);
+        stackPane.setVisible(authenticated);
         if (!authenticated) {
             nickname = "";
         }
@@ -56,6 +58,12 @@ public class Controller implements Initializable {
             }
         });
         linkCallbacks();
+    }
+
+    public void changeNickname() {
+        msgField.setText("/upNick ");
+        msgField.requestFocus();
+        msgField.selectEnd();
     }
 
     public void sendAuth() {
@@ -81,7 +89,17 @@ public class Controller implements Initializable {
     public void linkCallbacks() {
         Network.setCallOnException(args -> showAlert(args[0].toString()));
 
-        Network.setCallOnCloseConnection(args -> setAuthenticated(false));
+        Network.setCallOnCloseConnection(args -> {
+            String filename = String.format("history_%s.txt", nickname);
+
+            try (OutputStream file = new FileOutputStream(filename)) {
+                file.write(textArea.getText().getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                setAuthenticated(false);
+            }
+        });
 
         Network.setCallOnAuthenticated(args -> {
             setAuthenticated(true);

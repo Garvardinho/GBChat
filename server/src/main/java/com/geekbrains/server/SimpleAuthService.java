@@ -1,33 +1,15 @@
 package com.geekbrains.server;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class SimpleAuthService implements AuthService {
-    public SimpleAuthService() {}
+    private final DBHelper dbHelper = DBHelper.getInstance();
 
     @Override
     public String getNicknameByLoginAndPassword(String login, String password) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:myDatabase.db");
-            PreparedStatement preparedStatement = connection.prepareStatement
-                    ("SELECT * FROM users WHERE login = ? AND password = ?");
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        return DBHelper.getInstance().findNickname(login, password);
+    }
 
-            if (resultSet.next())
-                return resultSet.getString("nickname");
-
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    @Override
+    public boolean updateNickname(String oldNickname, String newNickname) {
+        return DBHelper.getInstance().updateNickname(oldNickname, newNickname) != 0;
     }
 }

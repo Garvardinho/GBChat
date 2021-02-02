@@ -11,6 +11,7 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private AuthService authService;
 
     public String getNickname() {
         return nickname;
@@ -22,14 +23,16 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
+
             new Thread(() -> {
                 try {
                     while (true) {
                         String msg = in.readUTF();
                         // /auth login1 pass1
                         if (msg.startsWith("/auth ")) {
+                            this.authService = server.getAuthService();
                             String[] tokens = msg.split("\\s");
-                            String nick = server.getAuthService().getNicknameByLoginAndPassword(tokens[1], tokens[2]);
+                            String nick = authService.getNicknameByLoginAndPassword(tokens[1], tokens[2]);
                             if (nick != null && !server.isNickBusy(nick)) {
                                 sendMsg("/authok " + nick);
                                 nickname = nick;
@@ -38,6 +41,7 @@ public class ClientHandler {
                             }
                         }
                     }
+
                     while (true) {
                         String msg = in.readUTF();
                         if (msg.startsWith("/")) {
@@ -45,9 +49,28 @@ public class ClientHandler {
                                 sendMsg("/end");
                                 break;
                             }
+
                             if (msg.startsWith("/w ")) {
                                 String[] tokens = msg.split("\\s", 3);
                                 server.privateMsg(this, tokens[1], tokens[2]);
+                            }
+
+                            if (msg.startsWith("/upNick")) {
+                                String[] tokens = msg.split("\\s", 2);
+
+                                if (tokens.length == 2 && !tokens[1].trim().equals("")) {
+                                    String newNickname = tokens[1].trim();
+
+                                    if (!server.isNickBusy(newNickname)
+                                            && authService.updateNickname(getNickname(), newNickname)) {
+                                        String message = String.format
+                                                ("Никнейм пользователя '%s' был изменен на '%s'", getNickname(), newNickname);
+                                        server.broadcastMsg(message);
+
+                                        nickname = newNickname;
+                                        server.broadcastClientsList();
+                                    }
+                                }
                             }
                         } else {
                             server.broadcastMsg(nickname + ": " + msg);
