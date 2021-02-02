@@ -1,0 +1,6 @@
+com\geekbrains\server\AuthService.class
+com\geekbrains\server\Server.class
+com\geekbrains\server\MainServer.class
+com\geekbrains\server\SimpleAuthService$UserData.class
+com\geekbrains\server\ClientHandler.class
+com\geekbrains\server\SimpleAuthService.class
