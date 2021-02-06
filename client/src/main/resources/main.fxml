@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="center" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geekbrains.client.Controller">
+<VBox alignment="center" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geekbrains.client.Controller">
     <HBox fx:id="authPanel">
         <TextField fx:id="loginField" promptText="Логин" HBox.hgrow="ALWAYS" />
         <PasswordField fx:id="passField" onAction="#sendAuth" promptText="Пароль" HBox.hgrow="ALWAYS" />

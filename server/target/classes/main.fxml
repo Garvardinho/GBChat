@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<HBox xmlns="http://javafx.com/javafx/8.0.261"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.geekbrains.server.ServerController"
+      fx:id="mainScene"
+      prefWidth="200" prefHeight="100">
+    <Button fx:id="start" onAction="#serverStart" text="Start server" HBox.hgrow="ALWAYS"/>
+    <Button fx:id="stop" onAction="#serverStop" text="Stop server" HBox.hgrow="ALWAYS"/>
+</HBox>
