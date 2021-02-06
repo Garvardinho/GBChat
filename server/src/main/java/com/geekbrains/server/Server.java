@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private Vector<ClientHandler> clients;
     private AuthService authService;
+    private ExecutorService executorService;
 
     public AuthService getAuthService() {
         return authService;
@@ -16,6 +19,8 @@ public class Server {
     public Server() {
         clients = new Vector<>();
         authService = new SimpleAuthService();
+        executorService = Executors.newCachedThreadPool();
+
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("Сервер запущен на порту 8189");
             while (true) {
@@ -83,5 +88,9 @@ public class Server {
         for (ClientHandler o : clients) {
             o.sendMsg(out);
         }
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }
