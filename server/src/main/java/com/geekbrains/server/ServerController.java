@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -22,6 +21,7 @@ public class ServerController implements Initializable {
 
     public void serverStart() {
         new Thread(() -> server = new Server()).start();
+        start.setManaged(false);
     }
 
     public void serverStop() {
